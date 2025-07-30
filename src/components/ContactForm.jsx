@@ -1,50 +1,62 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addContact } from "../redux/contactsSlice";
+import { addContact, deleteContact } from "../redux/contactsSlice";
 import { setFilter } from "../redux/filterSlice";
 import ContactList from "./ContactList";
 
 const ContactForm = () => {
-  const contacts = useSelector((state) => state.contacts);
-  const filter = useSelector((state) => state.filter);
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
-  const handleFilter = (e) => {
-    dispatch(setFilter(e.target.value));
-  };
+    const contacts = useSelector((state) => state.contacts.contacts.items);
+    const isLoading = useSelector((state) => state.contacts.contacts.isLoading);
+    const error = useSelector((state) => state.contacts.contacts.error);
+    const filter = useSelector((state) => state.filter);
 
-  const handleAddContact = (e) => {
-    e.preventDefault();
-    const name = e.target.elements.name.value.trim();
-    const phone = e.target.elements.phone.value.trim();
+    const handleFilter = (e) => {
+        dispatch(setFilter(e.target.value));
+    };
 
-    if (name && phone) {
-      dispatch(addContact({ name, phone }));
-      e.target.reset();
-    }
-  };
+    const handleAddContact = (e) => {
+        e.preventDefault();
+        const name = e.target.elements.name.value.trim();
+        const phone = e.target.elements.phone.value.trim();
 
-  const filteredContacts = contacts.filter((c) =>
-    c.name.toLowerCase().includes(filter.toLowerCase())
-  );
+        if (name && phone) {
+            dispatch(addContact({ name, phone }));
+            e.target.reset();
+        }
+    };
 
-  return (
-    <>
-      <form onSubmit={handleAddContact}>
-        <input name="name" placeholder="Ім’я" required />
-        <input name="phone" placeholder="Телефон" required />
-        <button type="submit">Додати контакт</button>
-      </form>
+    const filteredContacts = contacts.filter((c) => {
+        const name = c.name || "";
+        const search = (filter || "").toLowerCase();
+        return name.toLowerCase().includes(search);
+    });
 
-      <input
-        type="text"
-        placeholder="Пошук по імені"
-        value={filter}
-        onChange={handleFilter}
-      />
+    return (
+        <>
+            <form onSubmit={handleAddContact}>
+                <input name="name" placeholder="Ім’я" required />
+                <input name="phone" placeholder="Телефон" required />
+                <button type="submit" disabled={isLoading}>
+                    {isLoading ? "Завантаження..." : "Додати контакт"}
+                </button>
+            </form>
 
-      <ContactList contacts={filteredContacts} />
-    </>
-  );
+            {error && <p style={{ color: "red" }}>Помилка: {error}</p>}
+
+            <input
+                type="text"
+                placeholder="Пошук по імені"
+                value={filter}
+                onChange={handleFilter}
+            />
+
+            <ContactList
+                contacts={filteredContacts}
+                onDelete={(id) => dispatch(deleteContact(id))}
+            />
+        </>
+    );
 };
 
 export default ContactForm;
