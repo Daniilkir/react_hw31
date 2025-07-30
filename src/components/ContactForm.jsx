@@ -1,15 +1,22 @@
 import { useDispatch, useSelector } from "react-redux";
 import { addContact, deleteContact } from "../redux/contactsSlice";
 import { setFilter } from "../redux/filterSlice";
+import { selectFilter } from "../redux/selector";
+import { selectContacts } from "../redux/selector";
+import { fetchContactsThunk } from "../redux/contactsSlice";
+import { useEffect } from "react";
 import ContactList from "./ContactList";
 
 const ContactForm = () => {
     const dispatch = useDispatch();
 
-    const contacts = useSelector((state) => state.contacts.contacts.items);
-    const isLoading = useSelector((state) => state.contacts.contacts.isLoading);
-    const error = useSelector((state) => state.contacts.contacts.error);
-    const filter = useSelector((state) => state.filter);
+    const contacts = useSelector(selectContacts);
+    const filter = useSelector(selectFilter);
+
+    useEffect(() => {
+        dispatch(fetchContactsThunk());
+    }, [dispatch]);
+
 
     const handleFilter = (e) => {
         dispatch(setFilter(e.target.value));
@@ -37,12 +44,10 @@ const ContactForm = () => {
             <form onSubmit={handleAddContact}>
                 <input name="name" placeholder="Ім’я" required />
                 <input name="phone" placeholder="Телефон" required />
-                <button type="submit" disabled={isLoading}>
-                    {isLoading ? "Завантаження..." : "Додати контакт"}
+                <button type="submit">
+                    Додати
                 </button>
             </form>
-
-            {error && <p style={{ color: "red" }}>Помилка: {error}</p>}
 
             <input
                 type="text"
