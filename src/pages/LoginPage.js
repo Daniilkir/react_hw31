@@ -1,25 +1,23 @@
 import { useDispatch } from 'react-redux';
-import { registerUser } from '../redux/authSlice';
+import { loginUser } from '../redux/authSlice';
 
-export default function RegisterPage() {
+export default function LoginPage() {
     const dispatch = useDispatch();
 
     const handleSubmit = e => {
         e.preventDefault();
         const form = e.target;
-        const name = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
-        dispatch(registerUser({ name, email, password }));
+        dispatch(loginUser({ email, password }));
         form.reset();
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <input name="name" placeholder="Name" required />
             <input name="email" type="email" placeholder="Email" required />
             <input name="password" type="password" placeholder="Password" required />
-            <button type="submit">Register</button>
+            <button type="submit">Login</button>
         </form>
     );
 }
