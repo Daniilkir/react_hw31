@@ -13,6 +13,7 @@ export default function LoginPage() {
         form.reset();
     };
 
+
     return (
         <form onSubmit={handleSubmit}>
             <input name="email" type="email" placeholder="Email" required />
