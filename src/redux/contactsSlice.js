@@ -54,9 +54,10 @@ const contactsSlice = createSlice({
       .addCase(addContact.fulfilled, (state, { payload }) => {
         state.items.push(payload);
       })
-      .addCase(deleteContact.fulfilled, (state, { payload }) => {
-        state.items = state.items.filter(c => c.id !== payload);
-      });
+      .addCase(deleteContact.fulfilled,
+        (state, { payload }) => {
+          state.items = state.items.filter(c => c.id !== payload);
+        });
   },
 });
 

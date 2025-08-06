@@ -1,5 +1,5 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchCurrentUser } from './redux/authSlice';
 import Navigation from './components/Navigation';
@@ -10,13 +10,11 @@ import PrivateRoute from './components/PrivateRoute';
 
 export default function App() {
   const dispatch = useDispatch();
-  const { isRefreshing } = useSelector(state => state.auth);
 
   useEffect(() => {
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 
-  if (isRefreshing) return <p>Loading...</p>;
 
   return (
     <>
